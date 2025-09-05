@@ -1,17 +1,18 @@
 /** @type {import('next').NextConfig} */
 /* eslint-disable @typescript-eslint/no-var-requires */
+
 const nextConfig = {
-  // 静态导出，适配 EdgeOne Pages 仅托管静态资源
-  output: 'export',
-  // 确保输出到 out 目录
-  distDir: 'out',
-  trailingSlash: true,
+  output: 'standalone',
   eslint: {
     dirs: ['src'],
   },
 
   reactStrictMode: false,
-  swcMinify: true,
+  swcMinify: false,
+
+  experimental: {
+    instrumentationHook: process.env.NODE_ENV === 'production',
+  },
 
   // Uncoment to add domain whitelist
   images: {
@@ -68,12 +69,11 @@ const nextConfig = {
   },
 };
 
-// PWA 已禁用，因为与 output: 'export' 不兼容
-// const withPWA = require('next-pwa')({
-//   dest: 'public',
-//   disable: process.env.NODE_ENV === 'development',
-//   register: true,
-//   skipWaiting: true,
-// });
+const withPWA = require('next-pwa')({
+  dest: 'public',
+  disable: process.env.NODE_ENV === 'development',
+  register: true,
+  skipWaiting: true,
+});
 
-module.exports = nextConfig;
+module.exports = withPWA(nextConfig);
